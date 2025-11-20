@@ -1,27 +1,20 @@
 #!/bin/bash
 
-# Script to prepare asset directory for create_video.sh
-#
-# Usage: ./prepare_video_assets.sh IN_NAME OUT_NAME
-#
-# This script will:
-# 1. Find files in $HOME/Downloads matching IN_NAME.wav and IN_NAME(N).wav
-# 2. Check for duplicate file sizes and skipped numbers in the sequence.
-# 3. If checks pass, create a directory $HOME/VIDEOS/MUSIC/OUT_NAME
-# 4. Move and rename the found files into the new directory as 0.wav, 1.wav, etc.
-
 set -e # Exit on any error
 
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 IN_NAME OUT_NAME"
-    exit 1
+test_mode=false
+if [[ "$1" == "--test" ]]; then
+    test_mode=true
+    shift
 fi
 
-IN_NAME=$1
-OUT_NAME=$2
+CONFIG_PATH="$(dirname "$0")/config.sh"
+source "$CONFIG_PATH"
 
-DOWNLOADS_DIR="$HOME/Downloads"
-OUT_DIR="$HOME/Videos/Music/$OUT_NAME"
+IN_NAME=${DOWNLOADED_WAV_NAME:?"DOWNLOADED_WAV_NAME not set in config.sh"}
+OUT_NAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.sh"}
+DOWNLOADS_DIR=${DOWNLOAD_DIR:?"DOWNLOAD_DIR not set in config.sh"}
+OUT_DIR="${VIDEO_HOME:?"VIDEO_HOME not set in config.sh"}/$OUT_NAME"
 
 # Use associative arrays to store file info
 declare -A file_map # Maps number -> file_path
@@ -29,7 +22,6 @@ declare -A size_map # Maps size -> file_path
 
 echo "Searching for files in $DOWNLOADS_DIR..."
 
-# Find all potentially matching files first
 shopt -s nullglob
 potential_files=("$DOWNLOADS_DIR/$IN_NAME.wav" "$DOWNLOADS_DIR/$IN_NAME("*.wav)
 shopt -u nullglob
@@ -72,7 +64,6 @@ for file in "${potential_files[@]}"; do
 done
 
 # --- Validation Phase ---
-echo "Validating file sequence..."
 
 numbers=("${!file_map[@]}")
 
@@ -100,32 +91,34 @@ for (( i=0; i<${#sorted_numbers[@]}; i++ )); do
     fi
 done
 
-echo "Validation successful."
-
 # --- Audio Duration Validation ---
-echo "Validating total audio duration..."
-total_duration=0
-for number in "${sorted_numbers[@]}"; do
-    file_path=${file_map[$number]}
-    duration=$(soxi -D "$file_path")
-    if [ -z "$duration" ]; then
-        echo "Error: Could not get duration for file $file_path" >&2
+if [ "$test_mode" = false ]; then
+    echo "Validating total audio duration..."
+    total_duration=0
+    for number in "${sorted_numbers[@]}"; do
+        file_path=${file_map[$number]}
+        duration=$(soxi -D "$file_path")
+        if [ -z "$duration" ]; then
+            echo "Error: Could not get duration for file $file_path" >&2
+            exit 1
+        fi
+        total_duration=$(echo "$total_duration + $duration" | bc)
+    done
+
+    total_duration_int=$(LC_NUMERIC=C printf "%.0f" "$total_duration")
+    minutes=$((total_duration_int / 60))
+    seconds=$((total_duration_int % 60))
+    formatted_duration=$(printf "%d:%02d" $minutes $seconds)
+
+    if [ "$total_duration_int" -lt 3600 ]; then
+        echo "Error: Total duration of audio files is ${formatted_duration}, which is under 1 hour." >&2
         exit 1
     fi
-    total_duration=$(echo "$total_duration + $duration" | bc)
-done
 
-total_duration_int=$(LC_NUMERIC=C printf "%.0f" "$total_duration")
-minutes=$((total_duration_int / 60))
-seconds=$((total_duration_int % 60))
-formatted_duration=$(printf "%d:%02d" $minutes $seconds)
-
-if [ "$total_duration_int" -lt 3600 ]; then
-    echo "Error: Total duration of audio files is ${formatted_duration}, which is under 1 hour." >&2
-    exit 1
+    echo "Total audio duration is ${formatted_duration}. Validation passed."
+else
+    echo "Skipping audio duration validation (--test)."
 fi
-
-echo "Total audio duration is ${formatted_duration}. Validation passed."
 
 # --- Execution Phase ---
 echo "Creating directory and moving files..."
@@ -135,9 +128,7 @@ mkdir -p "$OUT_DIR"
 for number in "${sorted_numbers[@]}"; do
     src_path=${file_map[$number]}
     dest_path="$OUT_DIR/$number.wav"
-    echo "Moving '$(basename "$src_path")' to '$dest_path'"
     mv "$src_path" "$dest_path"
 done
 
-echo "Script finished successfully."
-echo "Output directory: $OUT_DIR"
+echo "Script finished successfully. Output directory: $OUT_DIR"

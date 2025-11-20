@@ -2,24 +2,29 @@
 
 # Script to stitch numbered .wav files in a directory together.
 #
-# Usage: ./stitch_wav_files.sh IN_NAME
-#
 # This script will:
-# 1. Look in the directory $HOME/Videos/Music/IN_NAME
+# 1. Look in the directory $VIDEO_HOME/IN_NAME
 # 2. Find all sequential .wav files (0.wav, 1.wav, 2.wav, ...)
 # 3. Use ffmpeg to concatenate them into a single IN_NAME.wav file.
 
 set -e # Exit on any error
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 IN_NAME"
+if [ "$#" -ne 0 ]; then
+    echo "Usage: $0" >&2
     exit 1
 fi
 
-IN_NAME=$1
-WORK_DIR="$HOME/Videos/Music/$IN_NAME"
+CONFIG_PATH="$(dirname "$0")/config.sh"
+if [ ! -f "$CONFIG_PATH" ]; then
+    echo "Error: config.sh not found at $CONFIG_PATH" >&2
+    exit 1
+fi
 
-# Check if the working directory exists
+source "$CONFIG_PATH"
+
+IN_NAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.sh"}
+WORK_DIR="${VIDEO_HOME:?"VIDEO_HOME not set in config.sh"}/$IN_NAME"
+
 if [ ! -d "$WORK_DIR" ]; then
     echo "Error: Directory not found: $WORK_DIR" >&2
     exit 1
@@ -34,8 +39,7 @@ LIST_FILE="concat_list.txt"
 SILENCE_FILE="silence.wav"
 > "$LIST_FILE" # Create or clear the list file
 
-# Create a 1-second silence file with properties matching the input files.
-# Using -y to overwrite if it exists from a previous failed run.
+# Create a silence file with properties matching the input files.
 if [ -f "0.wav" ]; then
     echo "Using 0.wav to determine sample rate for silence..."
     SAMPLE_RATE=$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of default=nw=1:nk=1 "0.wav")
