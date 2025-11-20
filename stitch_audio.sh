@@ -9,26 +9,10 @@
 
 set -e # Exit on any error
 
-if [ "$#" -ne 0 ]; then
-    echo "Usage: $0" >&2
-    exit 1
-fi
-
-CONFIG_PATH="$(dirname "$0")/config.sh"
-if [ ! -f "$CONFIG_PATH" ]; then
-    echo "Error: config.sh not found at $CONFIG_PATH" >&2
-    exit 1
-fi
-
-source "$CONFIG_PATH"
+source "$(dirname "$0")/config.sh"
 
 IN_NAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.sh"}
 WORK_DIR="${VIDEO_HOME:?"VIDEO_HOME not set in config.sh"}/$IN_NAME"
-
-if [ ! -d "$WORK_DIR" ]; then
-    echo "Error: Directory not found: $WORK_DIR" >&2
-    exit 1
-fi
 
 # Change to the working directory to simplify file paths
 cd "$WORK_DIR"

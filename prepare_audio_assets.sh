@@ -8,13 +8,12 @@ if [[ "$1" == "--test" ]]; then
     shift
 fi
 
-CONFIG_PATH="$(dirname "$0")/config.sh"
-source "$CONFIG_PATH"
+source "$(dirname "$0")/config.env"
 
-IN_NAME=${DOWNLOADED_WAV_NAME:?"DOWNLOADED_WAV_NAME not set in config.sh"}
-OUT_NAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.sh"}
-DOWNLOADS_DIR=${DOWNLOAD_DIR:?"DOWNLOAD_DIR not set in config.sh"}
-OUT_DIR="${VIDEO_HOME:?"VIDEO_HOME not set in config.sh"}/$OUT_NAME"
+IN_NAME=${DOWNLOADED_WAV_NAME:?"DOWNLOADED_WAV_NAME not set in config.env"}
+OUT_NAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.env"}
+DOWNLOADS_DIR=${DOWNLOAD_DIR:?"DOWNLOAD_DIR not set in config.env"}
+OUT_DIR="${VIDEO_HOME:?"VIDEO_HOME not set in config.env"}/$OUT_NAME"
 
 # Use associative arrays to store file info
 declare -A file_map # Maps number -> file_path
@@ -46,12 +45,6 @@ for file in "${potential_files[@]}"; do
         continue
     fi
 
-    # Check for duplicate number (should not happen with this logic, but good practice)
-    if [[ -n "${file_map[$number]}" ]]; then
-        echo "Error: Logic error, duplicate number $number found for '$file' and '${file_map[$number]}'." >&2
-        exit 1
-    fi
-
     # Check for duplicate size
     size=$(stat -c%s "$file")
     if [[ -n "${size_map[$size]}" ]]; then
@@ -72,7 +65,6 @@ if [ ${#numbers[@]} -eq 0 ]; then
     exit 0
 fi
 
-# Sort numbers numerically for sequence check
 sorted_numbers=($(printf "%s\n" "${numbers[@]}" | sort -n))
 
 # Check for missing IN_NAME.wav (number 0) if other numbered files exist.

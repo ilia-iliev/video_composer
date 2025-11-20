@@ -1,10 +1,10 @@
 #!/bin/bash
 
-CONFIG_PATH="$(dirname "$0")/config.sh"
+CONFIG_PATH="$(dirname "$0")/config.env"
 source "$CONFIG_PATH"
 
-FILENAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.sh"}
-VIDEOS_DIR="${VIDEO_HOME:?"VIDEO_HOME not set in config.sh"}/$FILENAME"
+FILENAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.env"}
+VIDEOS_DIR="${VIDEO_HOME:?"VIDEO_HOME not set in config.env"}/$FILENAME"
 IMAGE_FILE="$VIDEOS_DIR/$FILENAME.png"
 AUDIO_FILE="$VIDEOS_DIR/$FILENAME.wav"
 OUTPUT_FILE="$VIDEOS_DIR/$FILENAME.mp4"

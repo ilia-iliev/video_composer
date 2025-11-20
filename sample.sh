@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
-CONFIG_PATH="$(dirname "$0")/config.sh"
-source "$CONFIG_PATH"
+source "$(dirname "$0")/config.env"
 
 INPUT_NAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.sh"}
 INPUT_DIR="${VIDEO_HOME:?"VIDEO_HOME not set in config.sh"}/$INPUT_NAME"
