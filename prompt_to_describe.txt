@@ -1,7 +1,7 @@
 Your job is to come up with title and description for a music video. There is @./sample.mp3 - sample, the final version will be much longer but of similar type. The visual is at @./sample.jpg - a still image to go with the audio. 
 
-Your top priority is discoverability. Think about possible searches that people interested in such long-form music would look for.
+Your top priority is discoverability. Think of 15 diverse, non-overlapping use cases for listening to such music. Describe each use case and after the description give a number ballpark estimate of how many weekly unique users will search for the use case. Then leverage your estimation to create your description and title based on possible searches. Your top goal is to create a title and description that hit as many relevant searches as possible. 
 
 The title must be catchy but related.
 
-The description must not be overly verbose and shouldn't use emoji. It should hit keywords that people interested in such music will search for.
+Don't use emoji
