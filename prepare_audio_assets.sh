@@ -120,7 +120,11 @@ mkdir -p "$OUT_DIR"
 for number in "${sorted_numbers[@]}"; do
     src_path=${file_map[$number]}
     dest_path="$OUT_DIR/$number.wav"
-    mv "$src_path" "$dest_path"
+    if [ "$test_mode" = true ]; then
+        cp "$src_path" "$dest_path"
+    else
+        mv "$src_path" "$dest_path"
+    fi
 done
 
 echo "Script finished successfully. Output directory: $OUT_DIR"
