@@ -1,16 +1,10 @@
 #!/bin/bash
 
-
 set -e
-
 source "$(dirname "$0")/config.env"
 
-NAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.env"}
-TEXT=${THUMBNAIL_TEXT:?"THUMBNAIL_TEXT not set in config.env"}
 POSITION=${THUMNBAIL_TEXT_POSITION:-center}
-VIDEO_HOME=${VIDEO_HOME:?"VIDEO_HOME not set in config.env"}
-FONT=${THUMBNAIL_FONT:?"THUMBNAIL_FONT not set in config.env"}
-IMAGE_PATH="$VIDEO_HOME/$NAME/sample.jpg"
+IMAGE_PATH="$VIDEO_HOME/$NEW_VIDEO_NAME/sample.jpg"
 OUTPUT_PATH="$(dirname "$IMAGE_PATH")/thumbnail.jpg"
 
 IMAGE_HEIGHT=$(identify -format "%h" "$IMAGE_PATH")
@@ -34,16 +28,16 @@ fi
 Y_OFFSET=${Y_OFFSET#_}
 
 convert "$IMAGE_PATH" \
-        -font "$FONT" \
+        -font "$THUMBNAIL_FONT" \
         -pointsize "$POINT_SIZE" \
         -gravity center \
         -fill '#F3E5AB' \
         -stroke black \
         -strokewidth 9 \
-        -annotate +0$Y_OFFSET "$TEXT" \
+        -annotate +0$Y_OFFSET "$THUMBNAIL_TEXT" \
         -stroke '#6B4423' \
         -strokewidth 3 \
-        -annotate +0$Y_OFFSET "$TEXT" \
+        -annotate +0$Y_OFFSET "$THUMBNAIL_TEXT" \
         -quality 95 \
         "$OUTPUT_PATH"
 

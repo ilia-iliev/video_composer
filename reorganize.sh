@@ -85,7 +85,6 @@ done
 
 # --- Audio Duration Validation ---
 if [ "$test_mode" = false ]; then
-    echo "Validating total audio duration..."
     total_duration=0
     for number in "${sorted_numbers[@]}"; do
         file_path=${file_map[$number]}
@@ -111,9 +110,6 @@ if [ "$test_mode" = false ]; then
 else
     echo "Skipping audio duration validation (--test)."
 fi
-
-# --- Execution Phase ---
-echo "Creating directory and moving files..."
 
 mkdir -p "$OUT_DIR"
 
