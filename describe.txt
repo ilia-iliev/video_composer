@@ -1,7 +1,7 @@
-Your job is to come up with title and description for a music video. There is @./sample.mp3 - this is the sample music, the final version will be longer and have different tracks. The visual is at @./sample.jpg - a still image to go with the audio. 
+Your job is to come up with title and description for a music video. There is @./sample.mp3 - sample, the final version will be much longer but of similar type. The visual is at @./sample.jpg - a still image to go with the audio. 
 
 Your top priority is discoverability. Think about possible searches that people interested in such long-form music would look for.
 
 The title must be catchy but related.
 
-The description must NOT BE verbose. However, it should hit keywords that people interested in such music will search for. Also, no emojis!
+The description must not be overly verbose and shouldn't use emoji. It should hit keywords that people interested in such music will search for.

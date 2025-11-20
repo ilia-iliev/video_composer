@@ -9,12 +9,10 @@
 
 set -e # Exit on any error
 
-source "$(dirname "$0")/config.sh"
+source "$(dirname "$0")/config.env"
 
-IN_NAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.sh"}
-WORK_DIR="${VIDEO_HOME:?"VIDEO_HOME not set in config.sh"}/$IN_NAME"
-
-# Change to the working directory to simplify file paths
+IN_NAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.env"}
+WORK_DIR="${VIDEO_HOME:?"VIDEO_HOME not set in config.env"}/$IN_NAME"
 cd "$WORK_DIR"
 
 echo "Searching for sequential .wav files in $WORK_DIR..."
@@ -54,8 +52,6 @@ fi
 OUTPUT_FILENAME="$IN_NAME.wav"
 
 echo "Stitching $i files into $OUTPUT_FILENAME..."
-
-# Use ffmpeg to concatenate the files. -y overwrites output file if it exists.
 ffmpeg -y -f concat -safe 0 -i "$LIST_FILE" -c copy "$OUTPUT_FILENAME"
 
 # Clean up the temporary files

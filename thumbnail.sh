@@ -3,13 +3,13 @@
 
 set -e
 
-source "$(dirname "$0")/config.sh"
+source "$(dirname "$0")/config.env"
 
-NAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.sh"}
-TEXT=${THUMBNAIL_TEXT:?"THUMBNAIL_TEXT not set in config.sh"}
+NAME=${NEW_VIDEO_NAME:?"NEW_VIDEO_NAME not set in config.env"}
+TEXT=${THUMBNAIL_TEXT:?"THUMBNAIL_TEXT not set in config.env"}
 POSITION=${THUMNBAIL_TEXT_POSITION:-center}
-VIDEO_HOME=${VIDEO_HOME:?"VIDEO_HOME not set in config.sh"}
-FONT=${THUMBNAIL_FONT:?"THUMBNAIL_FONT not set in config.sh"}
+VIDEO_HOME=${VIDEO_HOME:?"VIDEO_HOME not set in config.env"}
+FONT=${THUMBNAIL_FONT:?"THUMBNAIL_FONT not set in config.env"}
 IMAGE_PATH="$VIDEO_HOME/$NAME/sample.jpg"
 OUTPUT_PATH="$(dirname "$IMAGE_PATH")/thumbnail.jpg"
 
