@@ -3,6 +3,8 @@
 source config.env
 
 prompt_template=$(cat prompt_to_describe.txt)
-samples_dir="$VIDEO_HOME/$NEW_VIDEO_NAME"
+video_dir="$VIDEO_HOME/$NEW_VIDEO_NAME"
+samples_dir="$video_dir/samples"
+cd "$samples_dir"
 
-gemini --include-directories "$samples_dir" -p "$prompt_template" -m gemini-2.5-pro >> "$samples_dir/description.txt"
+gemini -p "$prompt_template" -m gemini-3-pro-preview >> "$video_dir/description.txt"
